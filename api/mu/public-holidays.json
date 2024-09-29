@@ -1,7 +1,7 @@
 {
-    "country": "Mauritius",
-    "year": 2024,
-    "holidays": [
+  "country": "Mauritius",
+  "years": {
+    "2024": [
       {
         "name": "New Year",
         "date": "2024-01-01",
@@ -77,6 +77,83 @@
         "date": "2024-12-25",
         "day": "Wednesday"
       }
+    ],
+    "2025": [
+      {
+        "name": "New Year",
+        "date": "2025-01-01",
+        "day": "Wednesday"
+      },
+      {
+        "name": "New Year",
+        "date": "2025-01-02",
+        "day": "Thursday"
+      },
+      {
+        "name": "Thaipoosam Cavadee",
+        "date": "2025-02-13",
+        "day": "Thursday"
+      },
+      {
+        "name": "Abolition of Slavery",
+        "date": "2025-02-01",
+        "day": "Saturday"
+      },
+      {
+        "name": "Chinese Spring Festival",
+        "date": "2025-01-29",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Maha Shivaratree",
+        "date": "2025-02-26",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Independence and Republic Day",
+        "date": "2025-03-12",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Ugaadi",
+        "date": "2025-03-30",
+        "day": "Sunday"
+      },
+      {
+        "name": "Eid-ul-Fitr",
+        "date": "2025-04-20",
+        "day": "Sunday"
+      },
+      {
+        "name": "Labour Day",
+        "date": "2025-05-01",
+        "day": "Thursday"
+      },
+      {
+        "name": "Assumption of the Blessed Virgin Mary",
+        "date": "2025-08-15",
+        "day": "Friday"
+      },
+      {
+        "name": "Ganesh Chaturthi",
+        "date": "2025-09-27",
+        "day": "Saturday"
+      },
+      {
+        "name": "Divali",
+        "date": "2025-10-20",
+        "day": "Monday"
+      },
+      {
+        "name": "Arrival of Indentured Labourers",
+        "date": "2025-11-02",
+        "day": "Sunday"
+      },
+      {
+        "name": "Christmas",
+        "date": "2025-12-25",
+        "day": "Thursday"
+      }
     ]
   }
-  
+}
