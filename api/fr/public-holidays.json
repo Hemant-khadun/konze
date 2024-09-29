@@ -1,0 +1,154 @@
+{
+    "country": "France",
+    "years": {
+      "2024": [
+        {
+          "name": "New Year's Day",
+          "date": "2024-01-01",
+          "day": "Monday"
+        },
+        {
+          "name": "Good Friday",
+          "date": "2024-03-29",
+          "day": "Friday",
+          "note": "*"
+        },
+        {
+          "name": "Easter Monday",
+          "date": "2024-04-01",
+          "day": "Monday"
+        },
+        {
+          "name": "Labour Day",
+          "date": "2024-05-01",
+          "day": "Wednesday"
+        },
+        {
+          "name": "Victory Day",
+          "date": "2024-05-08",
+          "day": "Wednesday"
+        },
+        {
+          "name": "Ascension Day",
+          "date": "2024-05-09",
+          "day": "Thursday"
+        },
+        {
+          "name": "Whit Sunday",
+          "date": "2024-05-19",
+          "day": "Sunday"
+        },
+        {
+          "name": "Whit Monday",
+          "date": "2024-05-20",
+          "day": "Monday"
+        },
+        {
+          "name": "Bastille Day",
+          "date": "2024-07-14",
+          "day": "Sunday"
+        },
+        {
+          "name": "Assumption Day",
+          "date": "2024-08-15",
+          "day": "Thursday"
+        },
+        {
+          "name": "All Saints' Day",
+          "date": "2024-11-01",
+          "day": "Friday"
+        },
+        {
+          "name": "Armistice Day",
+          "date": "2024-11-11",
+          "day": "Monday"
+        },
+        {
+          "name": "Christmas Day",
+          "date": "2024-12-25",
+          "day": "Wednesday"
+        },
+        {
+          "name": "St Stephen's Day",
+          "date": "2024-12-26",
+          "day": "Thursday",
+          "note": "*"
+        }
+      ],
+      "2025": [
+        {
+          "name": "New Year's Day",
+          "date": "2025-01-01",
+          "day": "Wednesday"
+        },
+        {
+          "name": "Good Friday",
+          "date": "2025-04-18",
+          "day": "Friday",
+          "note": "*"
+        },
+        {
+          "name": "Easter Monday",
+          "date": "2025-04-21",
+          "day": "Monday"
+        },
+        {
+          "name": "Labour Day",
+          "date": "2025-05-01",
+          "day": "Thursday"
+        },
+        {
+          "name": "Victory Day",
+          "date": "2025-05-08",
+          "day": "Thursday"
+        },
+        {
+          "name": "Ascension Day",
+          "date": "2025-05-29",
+          "day": "Thursday"
+        },
+        {
+          "name": "Whit Sunday",
+          "date": "2025-06-08",
+          "day": "Sunday"
+        },
+        {
+          "name": "Whit Monday",
+          "date": "2025-06-09",
+          "day": "Monday"
+        },
+        {
+          "name": "Bastille Day",
+          "date": "2025-07-14",
+          "day": "Monday"
+        },
+        {
+          "name": "Assumption Day",
+          "date": "2025-08-15",
+          "day": "Friday"
+        },
+        {
+          "name": "All Saints' Day",
+          "date": "2025-11-01",
+          "day": "Saturday"
+        },
+        {
+          "name": "Armistice Day",
+          "date": "2025-11-11",
+          "day": "Tuesday"
+        },
+        {
+          "name": "Christmas Day",
+          "date": "2025-12-25",
+          "day": "Thursday"
+        },
+        {
+          "name": "St Stephen's Day",
+          "date": "2025-12-26",
+          "day": "Friday",
+          "note": "*"
+        }
+      ]
+    }
+  }
+  
