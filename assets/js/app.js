@@ -1906,6 +1906,14 @@ document.getElementById('year').textContent = new Date().getFullYear();
             }
             return nextDay;
           };
+
+          const findPreviousWorkingDay = (date) => {
+            const previousDay = new Date(date.setDate(date.getDate() - 1));
+            if (isWeekend(previousDay) || publicHolidays.find(holiday => holiday.date === previousDay.toISOString().split('T')[0])) {
+              return findPreviousWorkingDay(previousDay);
+            }
+            return previousDay;
+          };
           
           publicHolidays.forEach((holiday) => {
               const currentHoliday = new Date(holiday?.date);
@@ -1948,93 +1956,65 @@ document.getElementById('year').textContent = new Date().getFullYear();
                   let potentialLeave;
                   const currentDay = currentHoliday.getDay();
                   let tempDate = new Date(currentHoliday);
+                  
+                    switch (currentDay) {
+                      case 1: // Monday
+                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
 
-                  switch (currentDay) {
-                    case 1: // Monday
-                      tempDate.setDate(tempDate.getDate() + 1);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() - 3);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      break;
-                    case 2: // Tuesday
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 1);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() - 3);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      break;
-                    case 3: // Wednesday
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() - 1);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 4);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      break;
-                    case 4: // Thursday
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() - 1);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 3);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      break;
-                    case 5: // Friday
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 1);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 4);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      break;
-                    case 0: // Sunday
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 2);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 1);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      break;
-                    case 6: // Saturday
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 1);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      tempDate = new Date(currentHoliday);
-                      tempDate.setDate(tempDate.getDate() + 2);
-                      if (!isWeekend(tempDate) && !publicHolidays.some(holiday => holiday.date === tempDate.toISOString().split('T')[0])) {
-                        potentialLeaves.push(findNextWorkingDay(tempDate));
-                      }
-                      break;
-                    default:
-                  }
+                        potentialLeave = findNextWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+                        break;
+                      case 2: // Tuesday
+                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+
+                        potentialLeave = findNextWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+                        break;
+                      case 3: // Wednesday
+                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+
+                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+                        break;
+                      case 4: // Thursday
+                        potentialLeave = findNextWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+
+                        potentialLeave = findNextWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+                        break;
+                      case 5: // Friday
+                        potentialLeave = findNextWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+
+                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
+                          potentialLeaves.push(potentialLeave);
+                        }
+                        break;
+                    }
+
                   potentialLeaveDays.push(...potentialLeaves);
                 }
               }
