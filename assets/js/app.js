@@ -86,6 +86,7 @@
     // calendarInteraction()
     document.querySelector('#planning').style.display = 'block';
     Calendar.init()
+    initTippy()
     calendarInteraction()
   
     selectControl()
@@ -1795,10 +1796,12 @@ document.getElementById('year').textContent = new Date().getFullYear();
   }
   
   const Calendar = (function() {
-    const startYear = 2024
+    let currentYear = parseInt(document.getElementById('year').innerHTML);
+    let startYear = currentYear
     const startMonth = 1
     const monthRange = 12
     const weekDaysOrder = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ]
+    
     let calendarEl
   
     function updateVars() {
@@ -1861,11 +1864,59 @@ document.getElementById('year').textContent = new Date().getFullYear();
       updateVars()
       if (!calendarEl.length) return
 
-      const currentYear = new Date().getFullYear();
+      currentYear = parseInt(document.getElementById('year').innerHTML);
+
+      let startYear = currentYear
+      let responseMu;
+      let responseFr;
+      let responseSa;
+
+      if (localStorage.getItem('publicHolidaysMu')) {
+        responseMu = JSON.parse(localStorage.getItem('publicHolidaysMu'));
+      } else {
+        fetch('https://hemant-khadun.github.io/konze/api/mu/public-holidays.json')
+          .then(response => response.json())
+          .then(data => {
+            responseMu = data;
+            localStorage.setItem('publicHolidaysMu', JSON.stringify(responseMu));
+          });
+        responseMu = JSON.parse(localStorage.getItem('publicHolidaysMu'));
+      }
+
+      if (localStorage.getItem('publicHolidaysFr')) {
+        responseFr = JSON.parse(localStorage.getItem('publicHolidaysFr'));
+      } else {
+        fetch('https://hemant-khadun.github.io/konze/api/fr/public-holidays.json')
+          .then(response => response.json())
+          .then(data => {
+            responseFr = data;
+            localStorage.setItem('publicHolidaysFr', JSON.stringify(responseFr));
+          });
+        responseFr = JSON.parse(localStorage.getItem('publicHolidaysFr'));
+      }
+
+      if (localStorage.getItem('publicHolidaysSa')) {
+        responseSa = JSON.parse(localStorage.getItem('publicHolidaysSa'));
+      } else {
+        fetch('https://hemant-khadun.github.io/konze/api/sa/public-holidays.json')
+          .then(response => response.json())
+          .then(data => {
+            responseSa = data;
+            localStorage.setItem('publicHolidaysSa', JSON.stringify(responseSa));
+          });
+        responseSa = JSON.parse(localStorage.getItem('publicHolidaysSa'));
+      }
       
-      fetch('https://hemant-khadun.github.io/konze/api/mu/public-holidays.json')
-      .then(response => response.json())
-      .then(data => {
+      if (responseMu) {
+
+      const publicHolidays = responseMu.years[currentYear.toString()];
+
+      function isPublicHoliday(monthName, dayNum) {
+        const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
+        const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+        return publicHolidays.some(holiday => holiday.date === formattedDate);
+      }
+
 
         //check if js-calendar-slider exists else remove it
         const calendarElements = document.querySelectorAll('.js-calendar-slider');
@@ -1876,9 +1927,10 @@ document.getElementById('year').textContent = new Date().getFullYear();
             }
           })
         }
-        const publicHolidays = data.years[currentYear.toString()];
+
         let nbOfLeaves =  parseInt(document.getElementById('nbOfDays').innerHTML);
-        let remoteLocation = document.getElementById('remotely');
+        let remoteLocation = document.getElementById('remotely').innerHTML;
+        
         if (isNaN(nbOfLeaves)) {
           nbOfLeaves = 1;
         }
@@ -1906,7 +1958,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
             }
             return nextDay;
           };
-
           const findPreviousWorkingDay = (date) => {
             const previousDay = new Date(date.setDate(date.getDate() - 1));
             if (isWeekend(previousDay) || publicHolidays.find(holiday => holiday.date === previousDay.toISOString().split('T')[0])) {
@@ -1956,7 +2007,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
                   let potentialLeave;
                   const currentDay = currentHoliday.getDay();
                   let tempDate = new Date(currentHoliday);
-                  
+
                     switch (currentDay) {
                       case 1: // Monday
                         potentialLeave = findPreviousWorkingDay(tempDate);
@@ -2023,6 +2074,56 @@ document.getElementById('year').textContent = new Date().getFullYear();
           return potentialLeaveDays;
         }
 
+        function isRemotePublicHoliday(remoteLocation, monthName, dayNum) {
+          const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
+          const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+          const data = remoteLocation === 'South Africa' ? responseSa : responseFr;
+          const remoteHoliday = data.years[currentYear.toString()];
+          const localHoliday = publicHolidays.find(holiday => holiday?.date === formattedDate);
+
+          return remoteHoliday.some(holiday => holiday.date === formattedDate && !localHoliday);
+        }
+
+        function getHolidayTitle(monthName, dayNum, remoteLocation) {
+          var mauritiuanHolidayName = getHolidayName(monthName, dayNum);
+          if(mauritiuanHolidayName != '') {
+            return mauritiuanHolidayName;
+          }else if(remoteLocation === 'South Africa' || remoteLocation === 'France') {
+            return getRemoteHolidayName(remoteLocation, monthName, dayNum);
+          }
+          return '';
+        }
+
+        function getHolidayName(monthName, dayNum) {
+          const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
+          const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+          const holiday = publicHolidays.find(holiday => holiday?.date === formattedDate);
+          return holiday ? holiday.name : '';
+        }
+
+        function getRemoteHolidayName(remoteLocation, monthName, dayNum) {
+          const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
+          const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+          const data = remoteLocation === 'South Africa' ? responseSa : responseFr;
+          const remoteHoliday = data.years[currentYear.toString()];
+          const localHoliday = publicHolidays.find(holiday => holiday?.date === formattedDate);
+          const holiday = remoteHoliday.find(holiday => holiday?.date === formattedDate && !localHoliday);
+          return holiday ? holiday.name : '';
+        }
+        
+        function isDayAvailable(monthName, dayNum) {
+          const startDate = new Date(`${monthName} ${dayNum}, ${currentYear}`);
+          const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+          };
+          
+          const isDateInArray = _potentialLeaveDays.some(date => formatDate(date) === formatDate(startDate));
+          
+          return isDateInArray;
+        }
 
         calendarEl.forEach(calendarElement => {
           let calendarGrid = calendarElement.querySelector('.js-calendar-el-calendar');
@@ -2059,7 +2160,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
                             <div
                               data-index="${globalIndexUp()}" data-week="${el.weekDay}" data-month="${month.monthName.slice(0, 3)}"
                               class="elCalendar__sell -dark
-                              ${isDayAvailable(month.monthName, el.dayNum, nbOfLeaves) ? ' bg-accent-1' : ''}""
+                              ${isDayAvailable(month.monthName, el.dayNum, nbOfLeaves) ? ' bg-accent-1' : ''}"
                             >
                               <span class="js-date">
                                 ${el.dayNum}
@@ -2072,9 +2173,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
                               data-index="${globalIndexUp()}" data-week="${el.weekDay}" data-month="${month.monthName.slice(0, 3)}"
                               class="elCalendar__sell 
                               ${isPublicHoliday(month.monthName, el.dayNum) ? ' bg-dark-1 text-white tooltip-toggle' : ''} 
-                              ${isDayAvailable(month.monthName, el.dayNum, nbOfLeaves) ? ' bg-accent-1' : ''}"
-                              title="${getHolidayName(month.monthName, el.dayNum)}"
-                            >
+                              ${remoteLocation === 'South Africa' || remoteLocation === 'France' ? isRemotePublicHoliday(remoteLocation, month.monthName, el.dayNum) ? 'bg-accent-1 text-black tooltip-toggle' : '' : ''} 
+                              ${isDayAvailable(month.monthName, el.dayNum, nbOfLeaves) ? 'bg-potential' : ''}"
+                              title="${getHolidayTitle(month.monthName, el.dayNum, remoteLocation)}" >
                               <span class="js-date">
                                 ${el.dayNum}
                               </span>
@@ -2103,43 +2204,12 @@ document.getElementById('year').textContent = new Date().getFullYear();
             canlendarAlignHeights();
           }
 
-          function isPublicHoliday(monthName, dayNum) {
-            const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
-            const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
-            return publicHolidays.some(holiday => holiday.date === formattedDate);
-          }
-
-          function getHolidayName(monthName, dayNum) {
-            const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
-            const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
-            const holiday = publicHolidays.find(holiday => holiday.date === formattedDate);
-            return holiday ? holiday.name : '';
-          }
-
-        
-          
-          function isDayAvailable(monthName, dayNum) {
-            const startDate = new Date(`${monthName} ${dayNum}, ${currentYear}`);
-            const formatDate = (date) => {
-              const year = date.getFullYear();
-              const month = String(date.getMonth() + 1).padStart(2, '0');
-              const day = String(date.getDate()).padStart(2, '0');
-              return `${year}-${month}-${day}`;
-            };
-            
-            const isDateInArray = _potentialLeaveDays.some(date => formatDate(date) === formatDate(startDate));
-            
-            return isDateInArray;
-          }
-
         });
 
-        initTippy();
-
-      }).catch(error => console.error('Error fetching public holidays:', error));
+      }
+      // }).catch(error => console.error('Error fetching public holidays:', error));
 
     }
-
   
     function canlendarAlignHeights(){
       const calendarSliders = document.querySelectorAll('.js-calendar-el-calendar');
@@ -2189,25 +2259,25 @@ document.getElementById('year').textContent = new Date().getFullYear();
       // })
     }
 
-    function initTippy() {
-      const sellElements = document.querySelectorAll('.elCalendar__sell.bg-dark-1');
-
-      sellElements.forEach(el => {
-        const title = el.getAttribute('title');
-
-        if (title) {
-          tippy(el, {
-            content: title
-          });
-        }
-      });
-    }
-
     return {
       init: init,
     }
   })();
   
+  function initTippy() {
+    const sellElements = document.querySelectorAll('.elCalendar__sell.tooltip-toggle');
+
+    sellElements.forEach(el => {
+      const title = el.getAttribute('title');
+
+      if (title) {
+        tippy(el, {
+          content: title
+        });
+      }
+    });
+  }
+
   function calendarInteraction() {
     const target = document.querySelectorAll('.js-calendar')
     if (!target) return
@@ -2318,6 +2388,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
       }
     });
     Calendar.init();
+    initTippy();
   });
 
   })();

@@ -86,13 +86,13 @@
         </div>
 
         <div class="headerMobile__right">
-          <button class="d-flex">
+          <!-- <button class="d-flex">
             <i class="icon-search text-18"></i>
-          </button>
+          </button> -->
 
-          <button class="d-flex ml-20">
+          <!-- <button class="d-flex ml-20">
             <i class="icon-person text-18"></i>
-          </button>
+          </button> -->
         </div>
 
         <div class="header__right">
@@ -165,6 +165,38 @@
                   </div>
 
                   <div class="searchFormItem js-select-control js-form-dd">
+                    <div class="searchFormItem__button" data-x-click="years">
+                      <div class="searchFormItem__icon size-50 rounded-full bg-white flex-center">
+                        <i class="text-20 icon-calendar"></i>
+                      </div>
+                      <div class="searchFormItem__content">
+                        <h5>Year</h5>
+                        <div id="year" class="js-select-control-chosen">Select the year</div>
+                      </div>
+                    </div>
+
+                    <div class="searchFormItemDropdown -tour-type" data-x="years" data-x-toggle="is-active">
+                      <div class="searchFormItemDropdown__container">
+                        <div class="searchFormItemDropdown__list sroll-bar-1">
+
+                          <div class="searchFormItemDropdown__item">
+                            <button class="js-select-control-button">
+                              <span class="js-select-control-choice">2024</span>
+                            </button>
+                          </div>
+
+                          <div class="searchFormItemDropdown__item">
+                            <button class="js-select-control-button">
+                              <span class="js-select-control-choice">2025</span>
+                            </button>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="searchFormItem js-select-control js-form-dd">
                     <div class="searchFormItem__button" data-x-click="tour-type">
                       <div class="searchFormItem__icon size-50 rounded-full bg-white flex-center">
                         <i class="text-20 icon-calendar"></i>
@@ -194,8 +226,10 @@
                         </div>
                       </div>
                     </div>
-
                   </div>
+
+                  
+                  
                 </div>
 
                 <div class="searchForm__button">
@@ -258,12 +292,19 @@
         <div data-anim-child="slide-up" class="row justify-between items-end y-gap-10 g-lg-5">
           <div class="col-lg-12">
             <h2 class="text-30">Planning for the whole year</h2>
-            <div>
-              <h4>
-                <span class="text-18 text-blue-1">Total potential leaves : </span>
-                <span id="potential-leaves" class="text-18 text-blue-1"></span>
-              </h4>
+            <div class="legends-wrapper">
+                <h4 class="p-3 pb-0 pt-1">
+                  <span class="text-18 text-blue-1">Total potential leaves : </span>
+                  <span id="potential-leaves" class="text-18 text-blue-1"></span>
+                </h4>
+              <div class="legends-wrapper">
+                  <div class="pt-1 pb-1 p-3 mt-10 bg-dark-1 text-white rounded-20 text-center">Local Holidays</div>
+                  <div class="pt-1 pb-1 p-3 mt-10 bg-accent-1 rounded-20 text-center">Remote holidays</div>
+                  <div class="pt-1 pb-1 p-3 mt-10 bg-potential rounded-20 text-center">Potential Leaves</div>
+              </div>
+
             </div>
+           
           </div>
 
           <div class="col-lg-4 col-md-12">
