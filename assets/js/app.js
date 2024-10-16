@@ -1873,14 +1873,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
       if (localStorage.getItem('publicHolidaysMu')) {
         responseMu = JSON.parse(localStorage.getItem('publicHolidaysMu'));
-      } else {
-        fetch('https://hemant-khadun.github.io/konze/api/mu/public-holidays.json')
-          .then(response => response.json())
-          .then(data => {
-            responseMu = data;
-            localStorage.setItem('publicHolidaysMu', JSON.stringify(responseMu));
-          });
-        responseMu = JSON.parse(localStorage.getItem('publicHolidaysMu'));
       }
 
       if (localStorage.getItem('publicHolidaysFr')) {
@@ -1906,8 +1898,18 @@ document.getElementById('year').textContent = new Date().getFullYear();
           });
         responseSa = JSON.parse(localStorage.getItem('publicHolidaysSa'));
       }
-      
-      if (responseMu) {
+
+      if (!responseMu)  {
+        fetch('https://hemant-khadun.github.io/konze/api/mu/public-holidays.json')
+          .then(response => response.json())
+          .then(data => {
+            responseMu = data;
+            localStorage.setItem('publicHolidaysMu', JSON.stringify(responseMu));
+          }).then(() => {
+            init();
+          });
+        return;
+      }
 
       const publicHolidays = responseMu.years[currentYear.toString()];
 
@@ -1920,8 +1922,10 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
         //check if js-calendar-slider exists else remove it
         const calendarElements = document.querySelectorAll('.js-calendar-slider');
+        
         if (calendarElements !== null && calendarElements !== undefined) {
           calendarElements.forEach(calendarElement => {
+            
             if (calendarElement !== null && calendarElement !== undefined) {
               calendarElement.remove();
             }
@@ -2206,7 +2210,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
         });
 
-      }
+      // }
       // }).catch(error => console.error('Error fetching public holidays:', error));
 
     }
