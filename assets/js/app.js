@@ -1797,7 +1797,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
   
   const Calendar = (function() {
     let currentYear = parseInt(document.getElementById('year').innerHTML);
-    let startYear = currentYear
     const startMonth = 1
     const monthRange = 12
     const weekDaysOrder = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ]
@@ -1939,7 +1938,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
           nbOfLeaves = 1;
         }
 
-        const _potentialLeaveDays = getPotentialLeaveDays(nbOfLeaves);
+        const _potentialLeaveDays = getPotentialLeaveDays(nbOfLeaves, remoteLocation);
         const potentialLeaveDaysCount = _potentialLeaveDays.length;
 
         document.getElementById('potential-leaves').innerHTML = potentialLeaveDaysCount;
@@ -1953,19 +1952,31 @@ document.getElementById('year').textContent = new Date().getFullYear();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
         }
 
-        function getPotentialLeaveDays(leaveDays) {
+        function getPotentialLeaveDays(leaveDays, remoteLocation) {
           const potentialLeaveDays = [];
-          const findNextWorkingDay = (date) => {
+          const findNextWorkingDay = (date, remoteLocation) => {
             const nextDay = new Date(date.setDate(date.getDate() + 1));
-            if (isWeekend(nextDay) || publicHolidays.find(holiday => holiday.date === nextDay.toISOString().split('T')[0])) {
-              return findNextWorkingDay(nextDay);
+            const monthName = nextDay.toLocaleString('en-US', { month: 'long' });
+            const dayNum = nextDay.getDate();
+            
+            if (isWeekend(nextDay) ||
+            publicHolidays.find(holiday => holiday.date === nextDay.toISOString().split('T')[0]) ||
+            ((remoteLocation == 'France' || remoteLocation == 'South Africa') && isRemotePublicHoliday(remoteLocation, monthName, dayNum))
+            ) {
+              return findNextWorkingDay(nextDay, remoteLocation);
             }
             return nextDay;
           };
-          const findPreviousWorkingDay = (date) => {
+          const findPreviousWorkingDay = (date, remoteLocation) => {
             const previousDay = new Date(date.setDate(date.getDate() - 1));
-            if (isWeekend(previousDay) || publicHolidays.find(holiday => holiday.date === previousDay.toISOString().split('T')[0])) {
-              return findPreviousWorkingDay(previousDay);
+            const monthName = previousDay.toLocaleString('en-US', { month: 'long' });
+            const dayNum = previousDay.getDate();
+
+            if (isWeekend(previousDay) ||
+            publicHolidays.find(holiday => holiday.date === previousDay.toISOString().split('T')[0]) ||
+            ((remoteLocation == 'France' || remoteLocation == 'South Africa') && isRemotePublicHoliday(remoteLocation, monthName, dayNum))
+            ) {
+              return findPreviousWorkingDay(previousDay, remoteLocation);
             }
             return previousDay;
           };
@@ -1978,9 +1989,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
                 return;
               }
 
-              if(!isWeekend(currentHoliday)){
+              if(!isWeekend(currentHoliday)) {
 
-                if (isNotWednesday(currentHoliday) && leaveDays === 1) {
+                if ((isNotWednesday(currentHoliday) && leaveDays === 1) || (remoteLocation == 'South Africa' || remoteLocation == 'France' && leaveDays === 1) ) {
                   let potentialLeave;
                   switch (currentHoliday.getDay()) {
                     case 1: // Monday
@@ -1988,6 +1999,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
                       break;
                     case 2: // Tuesday
                       potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() - 1));
+                      break;
+                    case 3: // wednesday
+                      potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() + 1));
                       break;
                     case 4: // Thursday
                       potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() + 1));
@@ -1998,8 +2012,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
                     default:
                   }        
                            
-                  if (potentialLeave && publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
-                    potentialLeave = findNextWorkingDay(potentialLeave);
+                  if (potentialLeave && publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0]) || ((remoteLocation == 'France' || remoteLocation == 'South Africa') && isRemotePublicHoliday(remoteLocation, potentialLeave.toLocaleString('en-US', { month: 'long' }), potentialLeave.getDate()))) {
+                    potentialLeave = findNextWorkingDay(potentialLeave, remoteLocation);
                   }
 
                   if (potentialLeave && !publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
@@ -2014,56 +2028,55 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
                     switch (currentDay) {
                       case 1: // Monday
-                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        potentialLeave = findPreviousWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
-
-                        potentialLeave = findNextWorkingDay(tempDate);
+                        potentialLeave = findNextWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
                         break;
                       case 2: // Tuesday
-                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        potentialLeave = findPreviousWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
 
-                        potentialLeave = findNextWorkingDay(tempDate);
+                        potentialLeave = findNextWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
                         break;
                       case 3: // Wednesday
-                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        potentialLeave = findPreviousWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
 
-                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        potentialLeave = findPreviousWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
                         break;
                       case 4: // Thursday
-                        potentialLeave = findNextWorkingDay(tempDate);
+                        potentialLeave = findNextWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
 
-                        potentialLeave = findNextWorkingDay(tempDate);
+                        potentialLeave = findNextWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
                         break;
                       case 5: // Friday
-                        potentialLeave = findNextWorkingDay(tempDate);
+                        potentialLeave = findNextWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
 
-                        potentialLeave = findPreviousWorkingDay(tempDate);
+                        potentialLeave = findPreviousWorkingDay(tempDate, remoteLocation);
                         if (!publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0])) {
                           potentialLeaves.push(potentialLeave);
                         }
@@ -2125,7 +2138,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
           };
           
           const isDateInArray = _potentialLeaveDays.some(date => formatDate(date) === formatDate(startDate));
-          
           return isDateInArray;
         }
 
@@ -2139,6 +2151,12 @@ document.getElementById('year').textContent = new Date().getFullYear();
           function globalIndexUp() {
             globalIndex = globalIndex + 1;
             return globalIndex;
+          }
+
+          function getPreviousMonthName(monthName) {
+            const monthNames = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+            const currentMonthIndex = monthNames.indexOf(monthName);
+            return monthNames[(currentMonthIndex - 1 + 12) % 12];
           }
           
           calendarGrid.innerHTML += `
@@ -2158,13 +2176,14 @@ document.getElementById('year').textContent = new Date().getFullYear();
                         <div class="elCalendar__header">
                           ${weekDaysOrder.map(el => `<div class="elCalendar__header__sell">${el}</div>`).join('')}
                         </div>
-          
                         <div class="elCalendar__body">
                           ${month.firstDates.map(el => `
                             <div
                               data-index="${globalIndexUp()}" data-week="${el.weekDay}" data-month="${month.monthName.slice(0, 3)}"
                               class="elCalendar__sell -dark
-                              ${isDayAvailable(month.monthName, el.dayNum, nbOfLeaves) ? ' bg-accent-1' : ''}"
+                              ${isPublicHoliday(getPreviousMonthName(month.monthName), el.dayNum) ? ' bg-dark-1 text-white tooltip-toggle' : ''}
+                              ${isDayAvailable(getPreviousMonthName(month.monthName), el.dayNum, nbOfLeaves) ? 'bg-potential' : ''}
+                              "
                             >
                               <span class="js-date">
                                 ${el.dayNum}
