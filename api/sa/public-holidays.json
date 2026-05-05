@@ -1,145 +1,345 @@
 {
-    "country": "South Africa",
-    "years": {
-      "2024": [
-        {
-          "name": "New Year's Day",
-          "date": "2024-01-01",
-          "day": "Monday"
-        },
-        {
-          "name": "Human Rights Day",
-          "date": "2024-03-21",
-          "day": "Thursday"
-        },
-        {
-          "name": "Good Friday",
-          "date": "2024-03-29",
-          "day": "Friday"
-        },
-        {
-          "name": "Family Day",
-          "date": "2024-04-01",
-          "day": "Monday"
-        },
-        {
-          "name": "Freedom Day",
-          "date": "2024-04-27",
-          "day": "Saturday"
-        },
-        {
-          "name": "Workers' Day",
-          "date": "2024-05-01",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Special Public Holiday (Elections)",
-          "date": "2024-05-29",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Youth Day",
-          "date": "2024-06-16",
-          "day": "Sunday"
-        },
-        {
-          "name": "Youth Day Holiday",
-          "date": "2024-06-17",
-          "day": "Monday"
-        },
-        {
-          "name": "National Women's Day",
-          "date": "2024-08-09",
-          "day": "Friday"
-        },
-        {
-          "name": "Heritage Day",
-          "date": "2024-09-24",
-          "day": "Tuesday"
-        },
-        {
-          "name": "Day of Reconciliation",
-          "date": "2024-12-16",
-          "day": "Monday"
-        },
-        {
-          "name": "Christmas Day",
-          "date": "2024-12-25",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Day of Goodwill",
-          "date": "2024-12-26",
-          "day": "Thursday"
-        }
-      ],
-      "2025": [
-        {
-          "name": "New Year's Day",
-          "date": "2025-01-01",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Human Rights Day",
-          "date": "2025-03-21",
-          "day": "Friday"
-        },
-        {
-          "name": "Good Friday",
-          "date": "2025-04-18",
-          "day": "Friday"
-        },
-        {
-          "name": "Family Day",
-          "date": "2025-04-21",
-          "day": "Monday"
-        },
-        {
-          "name": "Freedom Day",
-          "date": "2025-04-27",
-          "day": "Sunday"
-        },
-        {
-          "name": "Freedom Day Holiday",
-          "date": "2025-04-28",
-          "day": "Monday"
-        },
-        {
-          "name": "Workers' Day",
-          "date": "2025-05-01",
-          "day": "Thursday"
-        },
-        {
-          "name": "Youth Day",
-          "date": "2025-06-16",
-          "day": "Monday"
-        },
-        {
-          "name": "National Women's Day",
-          "date": "2025-08-09",
-          "day": "Saturday"
-        },
-        {
-          "name": "Heritage Day",
-          "date": "2025-09-24",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Day of Reconciliation",
-          "date": "2025-12-16",
-          "day": "Tuesday"
-        },
-        {
-          "name": "Christmas Day",
-          "date": "2025-12-25",
-          "day": "Thursday"
-        },
-        {
-          "name": "Day of Goodwill",
-          "date": "2025-12-26",
-          "day": "Friday"
-        }
-      ]
-    }
+  "country": "South Africa",
+  "years": {
+    "2025": [
+      {
+        "name": "New Year's Day",
+        "date": "2025-01-01",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Human Rights Day",
+        "date": "2025-03-21",
+        "day": "Friday"
+      },
+      {
+        "name": "Good Friday",
+        "date": "2025-04-18",
+        "day": "Friday"
+      },
+      {
+        "name": "Family Day",
+        "date": "2025-04-21",
+        "day": "Monday"
+      },
+      {
+        "name": "Freedom Day",
+        "date": "2025-04-27",
+        "day": "Sunday"
+      },
+      {
+        "name": "Public Holiday",
+        "date": "2025-04-28",
+        "day": "Monday"
+      },
+      {
+        "name": "Workers' Day",
+        "date": "2025-05-01",
+        "day": "Thursday"
+      },
+      {
+        "name": "Youth Day",
+        "date": "2025-06-16",
+        "day": "Monday"
+      },
+      {
+        "name": "National Women's Day",
+        "date": "2025-08-09",
+        "day": "Saturday"
+      },
+      {
+        "name": "Heritage Day",
+        "date": "2025-09-24",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Day of Reconciliation",
+        "date": "2025-12-16",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Christmas Day",
+        "date": "2025-12-25",
+        "day": "Thursday"
+      },
+      {
+        "name": "Day of Goodwill",
+        "date": "2025-12-26",
+        "day": "Friday"
+      }
+    ],
+    "2026": [
+      {
+        "name": "New Year's Day",
+        "date": "2026-01-01",
+        "day": "Thursday"
+      },
+      {
+        "name": "Human Rights Day",
+        "date": "2026-03-21",
+        "day": "Saturday"
+      },
+      {
+        "name": "Good Friday",
+        "date": "2026-04-03",
+        "day": "Friday"
+      },
+      {
+        "name": "Family Day",
+        "date": "2026-04-06",
+        "day": "Monday"
+      },
+      {
+        "name": "Freedom Day",
+        "date": "2026-04-27",
+        "day": "Monday"
+      },
+      {
+        "name": "Workers' Day",
+        "date": "2026-05-01",
+        "day": "Friday"
+      },
+      {
+        "name": "Youth Day",
+        "date": "2026-06-16",
+        "day": "Tuesday"
+      },
+      {
+        "name": "National Women's Day",
+        "date": "2026-08-09",
+        "day": "Sunday"
+      },
+      {
+        "name": "Public Holiday",
+        "date": "2026-08-10",
+        "day": "Monday"
+      },
+      {
+        "name": "Heritage Day",
+        "date": "2026-09-24",
+        "day": "Thursday"
+      },
+      {
+        "name": "Day of Reconciliation",
+        "date": "2026-12-16",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Christmas Day",
+        "date": "2026-12-25",
+        "day": "Friday"
+      },
+      {
+        "name": "Day of Goodwill",
+        "date": "2026-12-26",
+        "day": "Saturday"
+      }
+    ],
+    "2027": [
+      {
+        "name": "New Year's Day",
+        "date": "2027-01-01",
+        "day": "Friday"
+      },
+      {
+        "name": "Human Rights Day",
+        "date": "2027-03-21",
+        "day": "Sunday"
+      },
+      {
+        "name": "Public Holiday",
+        "date": "2027-03-22",
+        "day": "Monday"
+      },
+      {
+        "name": "Good Friday",
+        "date": "2027-03-26",
+        "day": "Friday"
+      },
+      {
+        "name": "Family Day",
+        "date": "2027-03-29",
+        "day": "Monday"
+      },
+      {
+        "name": "Freedom Day",
+        "date": "2027-04-27",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Workers' Day",
+        "date": "2027-05-01",
+        "day": "Saturday"
+      },
+      {
+        "name": "Youth Day",
+        "date": "2027-06-16",
+        "day": "Wednesday"
+      },
+      {
+        "name": "National Women's Day",
+        "date": "2027-08-09",
+        "day": "Monday"
+      },
+      {
+        "name": "Heritage Day",
+        "date": "2027-09-24",
+        "day": "Friday"
+      },
+      {
+        "name": "Day of Reconciliation",
+        "date": "2027-12-16",
+        "day": "Thursday"
+      },
+      {
+        "name": "Christmas Day",
+        "date": "2027-12-25",
+        "day": "Saturday"
+      },
+      {
+        "name": "Day of Goodwill",
+        "date": "2027-12-26",
+        "day": "Sunday"
+      },
+      {
+        "name": "Public Holiday",
+        "date": "2027-12-27",
+        "day": "Monday"
+      }
+    ],
+    "2028": [
+      {
+        "name": "New Year's Day",
+        "date": "2028-01-01",
+        "day": "Saturday"
+      },
+      {
+        "name": "Human Rights Day",
+        "date": "2028-03-21",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Good Friday",
+        "date": "2028-04-14",
+        "day": "Friday"
+      },
+      {
+        "name": "Family Day",
+        "date": "2028-04-17",
+        "day": "Monday"
+      },
+      {
+        "name": "Freedom Day",
+        "date": "2028-04-27",
+        "day": "Thursday"
+      },
+      {
+        "name": "Workers' Day",
+        "date": "2028-05-01",
+        "day": "Monday"
+      },
+      {
+        "name": "Youth Day",
+        "date": "2028-06-16",
+        "day": "Friday"
+      },
+      {
+        "name": "National Women's Day",
+        "date": "2028-08-09",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Heritage Day",
+        "date": "2028-09-24",
+        "day": "Sunday"
+      },
+      {
+        "name": "Public Holiday",
+        "date": "2028-09-25",
+        "day": "Monday"
+      },
+      {
+        "name": "Day of Reconciliation",
+        "date": "2028-12-16",
+        "day": "Saturday"
+      },
+      {
+        "name": "Christmas Day",
+        "date": "2028-12-25",
+        "day": "Monday"
+      },
+      {
+        "name": "Day of Goodwill",
+        "date": "2028-12-26",
+        "day": "Tuesday"
+      }
+    ],
+    "2029": [
+      {
+        "name": "New Year's Day",
+        "date": "2029-01-01",
+        "day": "Monday"
+      },
+      {
+        "name": "Human Rights Day",
+        "date": "2029-03-21",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Good Friday",
+        "date": "2029-03-30",
+        "day": "Friday"
+      },
+      {
+        "name": "Family Day",
+        "date": "2029-04-02",
+        "day": "Monday"
+      },
+      {
+        "name": "Freedom Day",
+        "date": "2029-04-27",
+        "day": "Friday"
+      },
+      {
+        "name": "Workers' Day",
+        "date": "2029-05-01",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Youth Day",
+        "date": "2029-06-16",
+        "day": "Saturday"
+      },
+      {
+        "name": "National Women's Day",
+        "date": "2029-08-09",
+        "day": "Thursday"
+      },
+      {
+        "name": "Heritage Day",
+        "date": "2029-09-24",
+        "day": "Monday"
+      },
+      {
+        "name": "Day of Reconciliation",
+        "date": "2029-12-16",
+        "day": "Sunday"
+      },
+      {
+        "name": "Public Holiday",
+        "date": "2029-12-17",
+        "day": "Monday"
+      },
+      {
+        "name": "Christmas Day",
+        "date": "2029-12-25",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Day of Goodwill",
+        "date": "2029-12-26",
+        "day": "Wednesday"
+      }
+    ]
   }
-  
+}

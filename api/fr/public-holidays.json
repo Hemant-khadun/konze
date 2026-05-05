@@ -1,154 +1,290 @@
 {
-    "country": "France",
-    "years": {
-      "2024": [
-        {
-          "name": "New Year's Day",
-          "date": "2024-01-01",
-          "day": "Monday"
-        },
-        {
-          "name": "Good Friday",
-          "date": "2024-03-29",
-          "day": "Friday",
-          "note": "*"
-        },
-        {
-          "name": "Easter Monday",
-          "date": "2024-04-01",
-          "day": "Monday"
-        },
-        {
-          "name": "Labour Day",
-          "date": "2024-05-01",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Victory Day",
-          "date": "2024-05-08",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Ascension Day",
-          "date": "2024-05-09",
-          "day": "Thursday"
-        },
-        {
-          "name": "Whit Sunday",
-          "date": "2024-05-19",
-          "day": "Sunday"
-        },
-        {
-          "name": "Whit Monday",
-          "date": "2024-05-20",
-          "day": "Monday"
-        },
-        {
-          "name": "Bastille Day",
-          "date": "2024-07-14",
-          "day": "Sunday"
-        },
-        {
-          "name": "Assumption Day",
-          "date": "2024-08-15",
-          "day": "Thursday"
-        },
-        {
-          "name": "All Saints' Day",
-          "date": "2024-11-01",
-          "day": "Friday"
-        },
-        {
-          "name": "Armistice Day",
-          "date": "2024-11-11",
-          "day": "Monday"
-        },
-        {
-          "name": "Christmas Day",
-          "date": "2024-12-25",
-          "day": "Wednesday"
-        },
-        {
-          "name": "St Stephen's Day",
-          "date": "2024-12-26",
-          "day": "Thursday",
-          "note": "*"
-        }
-      ],
-      "2025": [
-        {
-          "name": "New Year's Day",
-          "date": "2025-01-01",
-          "day": "Wednesday"
-        },
-        {
-          "name": "Good Friday",
-          "date": "2025-04-18",
-          "day": "Friday",
-          "note": "*"
-        },
-        {
-          "name": "Easter Monday",
-          "date": "2025-04-21",
-          "day": "Monday"
-        },
-        {
-          "name": "Labour Day",
-          "date": "2025-05-01",
-          "day": "Thursday"
-        },
-        {
-          "name": "Victory Day",
-          "date": "2025-05-08",
-          "day": "Thursday"
-        },
-        {
-          "name": "Ascension Day",
-          "date": "2025-05-29",
-          "day": "Thursday"
-        },
-        {
-          "name": "Whit Sunday",
-          "date": "2025-06-08",
-          "day": "Sunday"
-        },
-        {
-          "name": "Whit Monday",
-          "date": "2025-06-09",
-          "day": "Monday"
-        },
-        {
-          "name": "Bastille Day",
-          "date": "2025-07-14",
-          "day": "Monday"
-        },
-        {
-          "name": "Assumption Day",
-          "date": "2025-08-15",
-          "day": "Friday"
-        },
-        {
-          "name": "All Saints' Day",
-          "date": "2025-11-01",
-          "day": "Saturday"
-        },
-        {
-          "name": "Armistice Day",
-          "date": "2025-11-11",
-          "day": "Tuesday"
-        },
-        {
-          "name": "Christmas Day",
-          "date": "2025-12-25",
-          "day": "Thursday"
-        },
-        {
-          "name": "St Stephen's Day",
-          "date": "2025-12-26",
-          "day": "Friday",
-          "note": "*"
-        }
-      ]
-    }
+  "country": "France",
+  "years": {
+    "2025": [
+      {
+        "name": "Nouvel An",
+        "date": "2025-01-01",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Lundi de Pâques",
+        "date": "2025-04-21",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête du travail",
+        "date": "2025-05-01",
+        "day": "Thursday"
+      },
+      {
+        "name": "Fête de la Victoire 1945",
+        "date": "2025-05-08",
+        "day": "Thursday"
+      },
+      {
+        "name": "Ascension",
+        "date": "2025-05-29",
+        "day": "Thursday"
+      },
+      {
+        "name": "Lundi de Pentecôte",
+        "date": "2025-06-09",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête Nationale de la France",
+        "date": "2025-07-14",
+        "day": "Monday"
+      },
+      {
+        "name": "Assomption",
+        "date": "2025-08-15",
+        "day": "Friday"
+      },
+      {
+        "name": "Toussaint",
+        "date": "2025-11-01",
+        "day": "Saturday"
+      },
+      {
+        "name": "Armistice 1918",
+        "date": "2025-11-11",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Noël",
+        "date": "2025-12-25",
+        "day": "Thursday"
+      }
+    ],
+    "2026": [
+      {
+        "name": "Nouvel An",
+        "date": "2026-01-01",
+        "day": "Thursday"
+      },
+      {
+        "name": "Lundi de Pâques",
+        "date": "2026-04-06",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête du travail",
+        "date": "2026-05-01",
+        "day": "Friday"
+      },
+      {
+        "name": "Fête de la Victoire 1945",
+        "date": "2026-05-08",
+        "day": "Friday"
+      },
+      {
+        "name": "Ascension",
+        "date": "2026-05-14",
+        "day": "Thursday"
+      },
+      {
+        "name": "Lundi de Pentecôte",
+        "date": "2026-05-25",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête Nationale de la France",
+        "date": "2026-07-14",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Assomption",
+        "date": "2026-08-15",
+        "day": "Saturday"
+      },
+      {
+        "name": "Toussaint",
+        "date": "2026-11-01",
+        "day": "Sunday"
+      },
+      {
+        "name": "Armistice 1918",
+        "date": "2026-11-11",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Noël",
+        "date": "2026-12-25",
+        "day": "Friday"
+      }
+    ],
+    "2027": [
+      {
+        "name": "Nouvel An",
+        "date": "2027-01-01",
+        "day": "Friday"
+      },
+      {
+        "name": "Lundi de Pâques",
+        "date": "2027-03-29",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête du travail",
+        "date": "2027-05-01",
+        "day": "Saturday"
+      },
+      {
+        "name": "Ascension",
+        "date": "2027-05-06",
+        "day": "Thursday"
+      },
+      {
+        "name": "Fête de la Victoire 1945",
+        "date": "2027-05-08",
+        "day": "Saturday"
+      },
+      {
+        "name": "Lundi de Pentecôte",
+        "date": "2027-05-17",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête Nationale de la France",
+        "date": "2027-07-14",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Assomption",
+        "date": "2027-08-15",
+        "day": "Sunday"
+      },
+      {
+        "name": "Toussaint",
+        "date": "2027-11-01",
+        "day": "Monday"
+      },
+      {
+        "name": "Armistice 1918",
+        "date": "2027-11-11",
+        "day": "Thursday"
+      },
+      {
+        "name": "Noël",
+        "date": "2027-12-25",
+        "day": "Saturday"
+      }
+    ],
+    "2028": [
+      {
+        "name": "Nouvel An",
+        "date": "2028-01-01",
+        "day": "Saturday"
+      },
+      {
+        "name": "Lundi de Pâques",
+        "date": "2028-04-17",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête du travail",
+        "date": "2028-05-01",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête de la Victoire 1945",
+        "date": "2028-05-08",
+        "day": "Monday"
+      },
+      {
+        "name": "Ascension",
+        "date": "2028-05-25",
+        "day": "Thursday"
+      },
+      {
+        "name": "Lundi de Pentecôte",
+        "date": "2028-06-05",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête Nationale de la France",
+        "date": "2028-07-14",
+        "day": "Friday"
+      },
+      {
+        "name": "Assomption",
+        "date": "2028-08-15",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Toussaint",
+        "date": "2028-11-01",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Armistice 1918",
+        "date": "2028-11-11",
+        "day": "Saturday"
+      },
+      {
+        "name": "Noël",
+        "date": "2028-12-25",
+        "day": "Monday"
+      }
+    ],
+    "2029": [
+      {
+        "name": "Nouvel An",
+        "date": "2029-01-01",
+        "day": "Monday"
+      },
+      {
+        "name": "Lundi de Pâques",
+        "date": "2029-04-02",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête du travail",
+        "date": "2029-05-01",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Fête de la Victoire 1945",
+        "date": "2029-05-08",
+        "day": "Tuesday"
+      },
+      {
+        "name": "Ascension",
+        "date": "2029-05-10",
+        "day": "Thursday"
+      },
+      {
+        "name": "Lundi de Pentecôte",
+        "date": "2029-05-21",
+        "day": "Monday"
+      },
+      {
+        "name": "Fête Nationale de la France",
+        "date": "2029-07-14",
+        "day": "Saturday"
+      },
+      {
+        "name": "Assomption",
+        "date": "2029-08-15",
+        "day": "Wednesday"
+      },
+      {
+        "name": "Toussaint",
+        "date": "2029-11-01",
+        "day": "Thursday"
+      },
+      {
+        "name": "Armistice 1918",
+        "date": "2029-11-11",
+        "day": "Sunday"
+      },
+      {
+        "name": "Noël",
+        "date": "2029-12-25",
+        "day": "Tuesday"
+      }
+    ]
   }
-  
+}

@@ -1,0 +1,13 @@
+{
+  "name": "konze-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Build-time tooling for konze holiday data generation.",
+  "scripts": {
+    "build:holidays": "node scripts/fetch-holidays.mjs"
+  },
+  "devDependencies": {
+    "date-holidays": "^3.24.4"
+  }
+}

@@ -1,0 +1,40 @@
+name: Refresh holiday data
+
+on:
+  schedule:
+    - cron: '0 3 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Regenerate holiday JSON
+        run: npm run build:holidays
+
+      - name: Commit changes if any
+        run: |
+          if [[ -n "$(git status --porcelain api)" ]]; then
+            git config user.name "konze-bot"
+            git config user.email "konze-bot@users.noreply.github.com"
+            git add api
+            git commit -m "chore(holidays): refresh generated holiday data"
+            git push
+          else
+            echo "Holiday data already up to date."
+          fi

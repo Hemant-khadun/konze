@@ -84,6 +84,7 @@
   
     // calendarSlider()
     // calendarInteraction()
+    initTripRangePicker()
     document.querySelector('#planning').style.display = 'block';
     Calendar.init()
     initTippy()
@@ -191,12 +192,148 @@
   
           button.classList.add('-is-button-active')
           chosen.innerHTML = choice.innerHTML
+
+          const chosenId = chosen ? chosen.id : ''
+          if (chosenId === 'year') {
+            initTripRangePicker()
+          }
+
+          if (chosenId === 'year' || chosenId === 'nbOfDays' || chosenId === 'remotely') {
+            Calendar.init()
+            initTippy()
+          }
         })
       })
     })
   }
 
-document.getElementById('year').textContent = new Date().getFullYear();
+  function getPlannerYearElement() {
+    return document.querySelector('[data-x-click="years"] #year')
+  }
+
+  function getSelectedPlannerYear() {
+    const yearElement = getPlannerYearElement()
+    const parsed = parseInt(yearElement && yearElement.textContent ? yearElement.textContent.trim() : '', 10)
+    return Number.isNaN(parsed) ? new Date().getFullYear() : parsed
+  }
+
+  function setupDynamicYearOptions() {
+    const yearElement = getPlannerYearElement()
+    const yearList = document.querySelector('[data-x="years"] .searchFormItemDropdown__list')
+    if (!yearElement || !yearList) return
+
+    const baseYear = new Date().getFullYear()
+    const years = [baseYear, baseYear + 1]
+
+    yearList.innerHTML = years.map((year, index) => `
+      <div class="searchFormItemDropdown__item">
+        <button class="js-select-control-button ${index === 0 ? '-is-button-active' : ''}">
+          <span class="js-select-control-choice">${year}</span>
+        </button>
+      </div>
+    `).join('')
+
+    yearElement.textContent = String(baseYear)
+  }
+
+  setupDynamicYearOptions()
+
+  const footerYear = document.getElementById('footer-year')
+  if (footerYear) {
+    footerYear.textContent = String(new Date().getFullYear())
+  }
+
+  function initTripRangePicker() {
+    const rangeInput = document.getElementById('tripRange')
+    const startInput = document.getElementById('tripStart')
+    const endInput = document.getElementById('tripEnd')
+    const clearButton = document.getElementById('tripRangeClear')
+
+    if (!rangeInput || !startInput || !endInput) return
+
+    const selectedYear = getSelectedPlannerYear()
+    const minDate = `${selectedYear}-01-01`
+    const maxDate = `${selectedYear}-12-31`
+
+    if (startInput.value && (startInput.value < minDate || startInput.value > maxDate)) {
+      startInput.value = ''
+    }
+
+    if (endInput.value && (endInput.value < minDate || endInput.value > maxDate)) {
+      endInput.value = ''
+    }
+
+    const syncButton = () => {
+      if (!clearButton) return
+      clearButton.hidden = !(startInput.value || endInput.value)
+    }
+
+    const syncHiddenDates = (selectedDates) => {
+      startInput.value = ''
+      endInput.value = ''
+
+      if (selectedDates[0]) {
+        startInput.value = flatpickr.formatDate(selectedDates[0], 'Y-m-d')
+      }
+
+      if (selectedDates[1]) {
+        endInput.value = flatpickr.formatDate(selectedDates[1], 'Y-m-d')
+      }
+
+      syncButton()
+    }
+
+    const applyRangeSelection = (selectedDates, forceRebuild = false) => {
+      syncHiddenDates(selectedDates)
+
+      const hasFullRange = selectedDates.length === 2
+      const wasCleared = selectedDates.length === 0
+
+      if (forceRebuild || hasFullRange || wasCleared) {
+        Calendar.init()
+        initTippy()
+      }
+    }
+
+    if (rangeInput._flatpickr) {
+      rangeInput._flatpickr.destroy()
+    }
+
+    if (typeof flatpickr === 'function') {
+      const picker = flatpickr(rangeInput, {
+        mode: 'range',
+        dateFormat: 'Y-m-d',
+        minDate,
+        maxDate,
+        disableMobile: true,
+        static: true,
+        clickOpens: true,
+        onChange: function(selectedDates) {
+          applyRangeSelection(selectedDates)
+        },
+        onClose: function(selectedDates) {
+          applyRangeSelection(selectedDates, true)
+        },
+      })
+
+      if (startInput.value && endInput.value) {
+        picker.setDate([startInput.value, endInput.value], false, 'Y-m-d')
+      }
+
+      if (clearButton) {
+        clearButton.addEventListener('click', () => {
+          picker.clear()
+          startInput.value = ''
+          endInput.value = ''
+          syncButton()
+          Calendar.init()
+          initTippy()
+        })
+      }
+    }
+
+    syncButton()
+  }
   
   function dropdown() {
     const targets = document.querySelectorAll('.js-dropdown')
@@ -1799,7 +1936,23 @@ document.getElementById('year').textContent = new Date().getFullYear();
     let currentYear = parseInt(document.getElementById('year').innerHTML);
     const startMonth = 1
     const monthRange = 12
+    const HOLIDAY_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000
     const weekDaysOrder = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ]
+    const MAURITIUS_PLAN_SUGGESTIONS = [
+      { category: 'international', title: 'Reunion island city break', tag: 'Flight trend', months: [5, 6, 7, 8, 9, 11], minDays: 3, maxDays: 6, reason: 'Quick hop from Mauritius with cool weather and easy weekend timing.', hint: 'Outside Dec peak, fares often trend 20-30% lower.' },
+      { category: 'international', title: 'Cape Town shoulder season', tag: 'Flight trend', months: [3, 4, 5, 9, 10], minDays: 5, maxDays: 9, reason: 'Great weather without peak holiday crowds.', hint: 'Shoulder months are usually among the cheapest flight windows.' },
+      { category: 'international', title: 'Dubai short escape', tag: 'Flight trend', months: [4, 5, 9, 10], minDays: 4, maxDays: 7, reason: 'Good for a compact city break with lots of indoor activities.', hint: 'Prices often soften just before and after winter high season.' },
+      { category: 'international', title: 'Thailand green-season value', tag: 'Hotel trend', months: [5, 6, 7, 8, 9], minDays: 7, maxDays: 12, reason: 'Lower crowds and better hotel deals for longer leave blocks.', hint: 'Rainy season can reduce prices, with showers usually in bursts.' },
+      { category: 'international', title: 'Sri Lanka culture loop', tag: 'Flight trend', months: [2, 3, 9, 10], minDays: 5, maxDays: 10, reason: 'Balanced weather for heritage and beach stops in one trip.', hint: 'Shoulder periods commonly show lower fares than Dec-Jan.' },
+      { category: 'international', title: 'Madagascar nature route', tag: 'Season pick', months: [4, 5, 6, 7, 8, 9, 10], minDays: 6, maxDays: 10, reason: 'Dry season is ideal for parks, wildlife, and road travel.', hint: 'Book outside school-break weeks for better prices.' },
+      { category: 'local-hike', title: 'Le Morne sunrise hike', tag: 'Dry season', months: [5, 6, 7, 8, 9, 10], minDays: 3, maxDays: 6, reason: 'Best visibility and comfort for early-morning climbing.', hint: 'Dry months reduce trail slip risk and improve viewpoints.' },
+      { category: 'local-hike', title: 'Black River Gorges trails', tag: 'Dry season', months: [5, 6, 7, 8, 9, 10], minDays: 4, maxDays: 8, reason: 'Cooler temperatures make full-day hikes easier.', hint: 'Pack layers, as upland mornings can feel cold.' },
+      { category: 'local-hike', title: 'Tamarind Falls canyon walk', tag: 'Dry season', months: [5, 6, 7, 8, 9], minDays: 3, maxDays: 6, reason: 'Good for active travelers who want a half-day adventure.', hint: 'Dry weather improves footing and route safety.' },
+      { category: 'local-place', title: 'Blue Bay and Ile aux Cerfs', tag: 'Beach day', months: [9, 10, 11, 12, 1, 2, 3, 4], minDays: 3, maxDays: 7, reason: 'Calmer sea days are ideal for snorkel and lagoon boating.', hint: 'Weekdays are calmer and often cheaper than weekends.' },
+      { category: 'local-place', title: 'Chamarel + seven colored earths', tag: 'Scenic drive', months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], minDays: 2, maxDays: 5, reason: 'Reliable all-year option mixing views, cafes, and short stops.', hint: 'Great fallback when the forecast is mixed.' },
+      { category: 'local-place', title: 'Pamplemousses and Port Louis day', tag: 'City pick', months: [1, 2, 3, 4, 11, 12], minDays: 2, maxDays: 4, reason: 'Rainy-season friendly plan with flexible indoor breaks.', hint: 'Good option during cyclone-season uncertainty.' },
+      { category: 'staycation', title: 'South-coast wellness staycation', tag: 'Rainy-season plan', months: [1, 2, 3], minDays: 2, maxDays: 5, reason: 'Spa and resort plan with low travel effort and weather flexibility.', hint: 'Local resort promos are common outside festive peak dates.' },
+    ]
     
     let calendarEl
   
@@ -1858,6 +2011,209 @@ document.getElementById('year').textContent = new Date().getFullYear();
   
       return allYearMonths
     }
+
+    function getStoredHolidayData(storageKey) {
+      const value = localStorage.getItem(storageKey)
+      if (!value) return null
+
+      try {
+        const parsed = JSON.parse(value)
+
+        // Backward compatibility with the previous plain payload shape.
+        if (parsed && parsed.years) {
+          return parsed
+        }
+
+        if (!parsed || !parsed.data || !parsed.cachedAt) {
+          localStorage.removeItem(storageKey)
+          return null
+        }
+
+        if (Date.now() - parsed.cachedAt > HOLIDAY_CACHE_TTL_MS) {
+          localStorage.removeItem(storageKey)
+          return null
+        }
+
+        return parsed.data
+      } catch (error) {
+        localStorage.removeItem(storageKey)
+        return null
+      }
+    }
+
+    function fetchHolidayData(url, storageKey) {
+      return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          localStorage.setItem(storageKey, JSON.stringify({
+            cachedAt: Date.now(),
+            data,
+          }))
+          return data
+        })
+    }
+
+    function formatDateKey(date) {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    function formatPlanDate(date) {
+      return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+      })
+    }
+
+    function getPlannerDateBounds(year) {
+      const startInput = document.getElementById('tripStart')
+      const endInput = document.getElementById('tripEnd')
+      const minDate = `${year}-01-01`
+      const maxDate = `${year}-12-31`
+
+      if (startInput) {
+        startInput.min = minDate
+        startInput.max = maxDate
+        if (startInput.value && (startInput.value < minDate || startInput.value > maxDate)) {
+          startInput.value = ''
+        }
+      }
+
+      if (endInput) {
+        endInput.min = minDate
+        endInput.max = maxDate
+        if (endInput.value && (endInput.value < minDate || endInput.value > maxDate)) {
+          endInput.value = ''
+        }
+      }
+
+      let rangeStart = startInput && startInput.value
+        ? new Date(`${startInput.value}T00:00:00`)
+        : new Date(`${year}-01-01T00:00:00`)
+      let rangeEnd = endInput && endInput.value
+        ? new Date(`${endInput.value}T23:59:59`)
+        : new Date(`${year}-12-31T23:59:59`)
+
+      if (rangeStart > rangeEnd) {
+        const nextStart = new Date(rangeEnd)
+        nextStart.setHours(0, 0, 0, 0)
+        const nextEnd = new Date(rangeStart)
+        nextEnd.setHours(23, 59, 59, 999)
+        rangeStart = nextStart
+        rangeEnd = nextEnd
+
+        if (startInput) startInput.value = formatDateKey(rangeStart)
+        if (endInput) endInput.value = formatDateKey(rangeEnd)
+      }
+
+      return {
+        rangeStart,
+        rangeEnd,
+        hasCustomRange: Boolean(startInput && endInput && startInput.value && endInput.value),
+      }
+    }
+
+    function renderPlannerNotice(message) {
+      const notice = document.getElementById('plannerNotice')
+      if (!notice) return
+      notice.textContent = message || ''
+    }
+
+    function pickPlanSuggestions(plan) {
+      const month = plan.start.getMonth() + 1
+      const tripLength = plan.totalDaysOff || 1
+
+      const matchingSuggestions = MAURITIUS_PLAN_SUGGESTIONS
+        .filter(suggestion => suggestion.months.includes(month) && tripLength >= suggestion.minDays && tripLength <= suggestion.maxDays)
+
+      const fallbackSuggestions = MAURITIUS_PLAN_SUGGESTIONS
+        .filter(suggestion => suggestion.category === 'local-place')
+
+      const pool = matchingSuggestions.length ? matchingSuggestions : fallbackSuggestions
+
+      const scored = pool
+        .map(suggestion => {
+          const middleLength = (suggestion.minDays + suggestion.maxDays) / 2
+          const lengthDistance = Math.abs(tripLength - middleLength)
+          const score = 100 - lengthDistance
+
+          return {
+            ...suggestion,
+            score,
+          }
+        })
+        .sort((left, right) => right.score - left.score)
+
+      const picked = []
+      const usedCategories = new Set()
+
+      scored.forEach(suggestion => {
+        if (picked.length >= 3) return
+        if (!usedCategories.has(suggestion.category)) {
+          picked.push(suggestion)
+          usedCategories.add(suggestion.category)
+        }
+      })
+
+      scored.forEach(suggestion => {
+        if (picked.length >= 3) return
+        if (!picked.find(item => item.title === suggestion.title)) {
+          picked.push(suggestion)
+        }
+      })
+
+      return picked.slice(0, 3)
+    }
+
+    function renderPlanSuggestionHtml(plan) {
+      const suggestions = pickPlanSuggestions(plan)
+
+      if (!suggestions.length) {
+        return ''
+      }
+
+      return `
+        <ul class="planner-plan-card__recos">
+          ${suggestions.map(suggestion => `
+            <li class="planner-plan-card__reco">
+              <div class="planner-plan-card__reco-head">
+                <span class="planner-plan-card__reco-tag">${suggestion.tag}</span>
+                <span class="planner-plan-card__reco-title">${suggestion.title}</span>
+              </div>
+              <div class="planner-plan-card__reco-text">${suggestion.reason}</div>
+              <div class="planner-plan-card__reco-hint">${suggestion.hint}</div>
+            </li>
+          `).join('')}
+        </ul>
+      `
+    }
+
+    function renderRecommendedPlans(plans, hasCustomRange) {
+      const container = document.getElementById('recommended-plans')
+      if (!container) return
+
+      if (!plans.length) {
+        container.innerHTML = `
+          <div class="planner-plan-empty">
+            No high-value bridge plan was found in this ${hasCustomRange ? 'date range' : 'year'} yet. Try a wider range, a different remote country, or a larger leave budget.
+          </div>
+        `
+        return
+      }
+
+      container.innerHTML = plans.map((plan, index) => `
+        <article class="planner-plan-card">
+          <div class="planner-plan-card__eyebrow">Top pick ${index + 1}</div>
+          <div class="planner-plan-card__title">${plan.totalDaysOff} days off</div>
+          <div class="planner-plan-card__meta">Use ${plan.ptoUsed} leave day${plan.ptoUsed > 1 ? 's' : ''} to unlock ${plan.freeDays} free day${plan.freeDays > 1 ? 's' : ''}.</div>
+          <div class="planner-plan-card__meta">Efficiency: ${plan.score.toFixed(1)}x return on PTO.</div>
+          <div class="planner-plan-card__dates">${formatPlanDate(plan.start)} to ${formatPlanDate(plan.end)}<br>Book off: ${plan.leaveDates.join(', ')}</div>
+          ${renderPlanSuggestionHtml(plan)}
+        </article>
+      `).join('')
+    }
   
     function init() {
       updateVars()
@@ -1866,51 +2222,78 @@ document.getElementById('year').textContent = new Date().getFullYear();
       currentYear = parseInt(document.getElementById('year').innerHTML);
 
       let startYear = currentYear
-      let responseMu;
-      let responseFr;
-      let responseSa;
+      let responseMu = getStoredHolidayData('publicHolidaysMu');
+      let responseFr = getStoredHolidayData('publicHolidaysFr');
+      let responseSa = getStoredHolidayData('publicHolidaysSa');
 
-      if (localStorage.getItem('publicHolidaysMu')) {
-        responseMu = JSON.parse(localStorage.getItem('publicHolidaysMu'));
+      const yearKey = currentYear.toString()
+
+      if (responseMu && !responseMu?.years?.[yearKey]) {
+        localStorage.removeItem('publicHolidaysMu')
+        responseMu = null
       }
 
-      if (localStorage.getItem('publicHolidaysFr')) {
-        responseFr = JSON.parse(localStorage.getItem('publicHolidaysFr'));
-      } else {
-        fetch('https://hemant-khadun.github.io/konze/api/fr/public-holidays.json')
-          .then(response => response.json())
-          .then(data => {
-            responseFr = data;
-            localStorage.setItem('publicHolidaysFr', JSON.stringify(responseFr));
-          });
-        responseFr = JSON.parse(localStorage.getItem('publicHolidaysFr'));
+      if (responseFr && !responseFr?.years?.[yearKey]) {
+        localStorage.removeItem('publicHolidaysFr')
+        responseFr = null
       }
 
-      if (localStorage.getItem('publicHolidaysSa')) {
-        responseSa = JSON.parse(localStorage.getItem('publicHolidaysSa'));
-      } else {
-        fetch('https://hemant-khadun.github.io/konze/api/sa/public-holidays.json')
-          .then(response => response.json())
-          .then(data => {
-            responseSa = data;
-            localStorage.setItem('publicHolidaysSa', JSON.stringify(responseSa));
-          });
-        responseSa = JSON.parse(localStorage.getItem('publicHolidaysSa'));
+      if (responseSa && !responseSa?.years?.[yearKey]) {
+        localStorage.removeItem('publicHolidaysSa')
+        responseSa = null
       }
 
       if (!responseMu)  {
-        fetch('https://hemant-khadun.github.io/konze/api/mu/public-holidays.json')
-          .then(response => response.json())
-          .then(data => {
-            responseMu = data;
-            localStorage.setItem('publicHolidaysMu', JSON.stringify(responseMu));
-          }).then(() => {
+        fetchHolidayData('./api/mu/public-holidays.json', 'publicHolidaysMu')
+          .then(() => {
             init();
           });
         return;
       }
 
-      const publicHolidays = responseMu.years[currentYear.toString()];
+      if (!responseFr) {
+        fetchHolidayData('./api/fr/public-holidays.json', 'publicHolidaysFr')
+          .then(() => {
+            init();
+          });
+        return;
+      }
+
+      if (!responseSa) {
+        fetchHolidayData('./api/sa/public-holidays.json', 'publicHolidaysSa')
+          .then(() => {
+            init();
+          });
+        return;
+      }
+
+      const publicHolidays = responseMu?.years?.[currentYear.toString()] || [];
+      const supportedYears = Object.keys(responseMu?.years || {});
+      const { rangeStart, rangeEnd, hasCustomRange } = getPlannerDateBounds(currentYear)
+
+      if (!publicHolidays.length) {
+        renderPlannerNotice(`Holiday data for ${currentYear} is not available in the shipped dataset yet. Supported years: ${supportedYears.join(', ')}.`)
+      } else {
+        const holidaysInRange = publicHolidays.filter(holiday => {
+          const d = new Date(holiday.date + 'T00:00:00')
+          return d >= rangeStart && d <= rangeEnd
+        })
+
+        let notice = `Showing the best bridge opportunities between ${formatPlanDate(rangeStart)} and ${formatPlanDate(rangeEnd)}.`
+
+        if (hasCustomRange) {
+          if (holidaysInRange.length) {
+            const names = holidaysInRange
+              .map(h => `${h.name} (${formatPlanDate(new Date(h.date + 'T00:00:00'))})`)
+              .join(', ')
+            notice += ` ${holidaysInRange.length} public holiday${holidaysInRange.length > 1 ? 's' : ''} in this window: ${names}.`
+          } else {
+            notice += ' No public holidays fall in this date range - bridge plans work best around holidays. Try a wider window.'
+          }
+        }
+
+        renderPlannerNotice(notice)
+      }
 
       function isPublicHoliday(monthName, dayNum) {
         const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
@@ -1939,7 +2322,11 @@ document.getElementById('year').textContent = new Date().getFullYear();
         }
 
         const _potentialLeaveDays = getPotentialLeaveDays(nbOfLeaves, remoteLocation);
-        const potentialLeaveDaysCount = _potentialLeaveDays.length;
+        const potentialLeaveDaysCount = new Set(
+          _potentialLeaveDays
+            .filter(date => date >= rangeStart && date <= rangeEnd)
+            .map(date => formatDateKey(date))
+        ).size;
 
         document.getElementById('potential-leaves').innerHTML = potentialLeaveDaysCount;
 
@@ -1951,6 +2338,92 @@ document.getElementById('year').textContent = new Date().getFullYear();
           const day = date.getDay();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
         }
+
+        function buildPlannerDays(remoteLocation) {
+          const plannerDays = [];
+
+          for (let month = 0; month < 12; month++) {
+            const totalDays = new Date(currentYear, month + 1, 0).getDate();
+
+            for (let day = 1; day <= totalDays; day++) {
+              const date = new Date(currentYear, month, day);
+              const monthName = date.toLocaleString('en-US', { month: 'long' });
+              const isLocalHoliday = publicHolidays.some(holiday => holiday.date === formatDateKey(date));
+              const isRemoteHoliday = (remoteLocation == 'South Africa' || remoteLocation == 'France')
+                ? isRemotePublicHoliday(remoteLocation, monthName, day)
+                : false;
+              const freeDay = isWeekend(date) || isLocalHoliday || isRemoteHoliday;
+
+              plannerDays.push({
+                date,
+                key: formatDateKey(date),
+                isFree: freeDay,
+              });
+            }
+          }
+
+          return plannerDays;
+        }
+
+        function getRecommendedPlans(days, leaveBudget) {
+          if (!leaveBudget || leaveBudget < 1) return []
+
+          const plans = []
+          const maxWindowLength = Math.min(days.length, leaveBudget + 12)
+
+          for (let startIndex = 0; startIndex < days.length; startIndex++) {
+            const startDay = days[startIndex]
+
+            if (startDay.date < rangeStart || startDay.date > rangeEnd) continue
+
+            let ptoUsed = 0
+            let leaveDates = []
+
+            for (let endIndex = startIndex; endIndex < days.length && endIndex < startIndex + maxWindowLength; endIndex++) {
+              const endDay = days[endIndex]
+
+              if (endDay.date > rangeEnd) break
+
+              if (!endDay.isFree) {
+                ptoUsed += 1
+                leaveDates.push(formatPlanDate(endDay.date))
+              }
+
+              if (ptoUsed > leaveBudget) break
+
+              const totalDaysOff = endIndex - startIndex + 1
+              if (ptoUsed === 0 || totalDaysOff < 3) continue
+
+              const score = totalDaysOff / ptoUsed
+              if (score < 1.5) continue
+
+              plans.push({
+                start: startDay.date,
+                end: endDay.date,
+                ptoUsed,
+                totalDaysOff,
+                freeDays: totalDaysOff - ptoUsed,
+                score,
+                leaveDates: [...leaveDates],
+              })
+            }
+          }
+
+          plans.sort((left, right) => right.score - left.score || right.totalDaysOff - left.totalDaysOff || left.start - right.start)
+
+          const selectedPlans = []
+          plans.forEach(plan => {
+            const overlapsExisting = selectedPlans.some(selected => !(plan.end < selected.start || plan.start > selected.end))
+            if (!overlapsExisting && selectedPlans.length < 6) {
+              selectedPlans.push(plan)
+            }
+          })
+
+          return selectedPlans
+        }
+
+        const recommendedPlans = getRecommendedPlans(buildPlannerDays(remoteLocation), nbOfLeaves)
+        renderRecommendedPlans(recommendedPlans, hasCustomRange)
 
         function getPotentialLeaveDays(leaveDays, remoteLocation) {
           const potentialLeaveDays = [];
@@ -1991,28 +2464,36 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
               if(!isWeekend(currentHoliday)) {
 
-                if ((isNotWednesday(currentHoliday) && leaveDays === 1) || (remoteLocation == 'South Africa' || remoteLocation == 'France' && leaveDays === 1) ) {
+                if ((isNotWednesday(currentHoliday) && leaveDays === 1) || ((remoteLocation == 'South Africa' || remoteLocation == 'France') && leaveDays === 1)) {
                   let potentialLeave;
                   switch (currentHoliday.getDay()) {
                     case 1: // Monday
-                      potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() - 3));
+                      potentialLeave = new Date(currentHoliday);
+                      potentialLeave.setDate(potentialLeave.getDate() - 3);
                       break;
                     case 2: // Tuesday
-                      potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() - 1));
+                      potentialLeave = new Date(currentHoliday);
+                      potentialLeave.setDate(potentialLeave.getDate() - 1);
                       break;
                     case 3: // wednesday
-                      potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() + 1));
+                      potentialLeave = new Date(currentHoliday);
+                      potentialLeave.setDate(potentialLeave.getDate() + 1);
                       break;
                     case 4: // Thursday
-                      potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() + 1));
+                      potentialLeave = new Date(currentHoliday);
+                      potentialLeave.setDate(potentialLeave.getDate() + 1);
                       break;
                     case 5: // Friday
-                      potentialLeave = new Date(currentHoliday.setDate(currentHoliday.getDate() + 3));
+                      potentialLeave = new Date(currentHoliday);
+                      potentialLeave.setDate(potentialLeave.getDate() + 3);
                       break;
                     default:
                   }        
                            
-                  if (potentialLeave && publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0]) || ((remoteLocation == 'France' || remoteLocation == 'South Africa') && isRemotePublicHoliday(remoteLocation, potentialLeave.toLocaleString('en-US', { month: 'long' }), potentialLeave.getDate()))) {
+                  if (potentialLeave && (
+                    publicHolidays.some(holiday => holiday.date === potentialLeave.toISOString().split('T')[0]) ||
+                    ((remoteLocation == 'France' || remoteLocation == 'South Africa') && isRemotePublicHoliday(remoteLocation, potentialLeave.toLocaleString('en-US', { month: 'long' }), potentialLeave.getDate()))
+                  )) {
                     potentialLeave = findNextWorkingDay(potentialLeave, remoteLocation);
                   }
 
@@ -2095,7 +2576,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
           const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
           const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
           const data = remoteLocation === 'South Africa' ? responseSa : responseFr;
-          const remoteHoliday = data.years[currentYear.toString()];
+          const remoteHoliday = data?.years?.[currentYear.toString()] || [];
           const localHoliday = publicHolidays.find(holiday => holiday?.date === formattedDate);
 
           return remoteHoliday.some(holiday => holiday.date === formattedDate && !localHoliday);
@@ -2122,7 +2603,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
           const monthIndex = new Date(`${monthName} 1, ${currentYear}`).getMonth() + 1;
           const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
           const data = remoteLocation === 'South Africa' ? responseSa : responseFr;
-          const remoteHoliday = data.years[currentYear.toString()];
+          const remoteHoliday = data?.years?.[currentYear.toString()] || [];
           const localHoliday = publicHolidays.find(holiday => holiday?.date === formattedDate);
           const holiday = remoteHoliday.find(holiday => holiday?.date === formattedDate && !localHoliday);
           return holiday ? holiday.name : '';
@@ -2141,11 +2622,37 @@ document.getElementById('year').textContent = new Date().getFullYear();
           return isDateInArray;
         }
 
+        function isInSelectedRange(monthName, dayNum, yearOffset = 0) {
+          if (!hasCustomRange) return true;
+          const date = new Date(`${monthName} ${dayNum}, ${currentYear + yearOffset}`);
+          return date >= rangeStart && date <= rangeEnd;
+        }
+
+        function monthIntersectsSelectedRange(monthIndex) {
+          if (!hasCustomRange) return true;
+
+          const monthStart = new Date(currentYear, monthIndex, 1, 0, 0, 0, 0);
+          const monthEnd = new Date(currentYear, monthIndex + 1, 0, 23, 59, 59, 999);
+
+          return monthEnd >= rangeStart && monthStart <= rangeEnd;
+        }
+
         calendarEl.forEach(calendarElement => {
           let calendarGrid = calendarElement.querySelector('.js-calendar-el-calendar');
           let currentMonthId = calendarGrid.id; // Get the current month ID (e.g., 'jan', 'feb', etc.)
           
           let allYearMonths = getFullYearDates(`${startMonth}/${startYear}`, monthRange);
+          const monthIndex = allYearMonths.findIndex(month => month.monthName.slice(0, 3).toLowerCase() === currentMonthId)
+          const monthWrapper = calendarElement.closest('.col-lg-4') || calendarElement.parentElement
+
+          if (monthWrapper) {
+            monthWrapper.style.display = monthIndex === -1 || monthIntersectsSelectedRange(monthIndex) ? '' : 'none'
+          }
+
+          if (monthIndex !== -1 && !monthIntersectsSelectedRange(monthIndex)) {
+            return
+          }
+
           let globalIndex = 0;
           
           function globalIndexUp() {
@@ -2183,6 +2690,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
                               class="elCalendar__sell -dark
                               ${isPublicHoliday(getPreviousMonthName(month.monthName), el.dayNum) ? ' bg-dark-1 text-white tooltip-toggle' : ''}
                               ${isDayAvailable(getPreviousMonthName(month.monthName), el.dayNum, nbOfLeaves) ? 'bg-potential' : ''}
+                              ${!isInSelectedRange(getPreviousMonthName(month.monthName), el.dayNum, month.monthName === 'january' ? -1 : 0) ? 'is-out-of-range' : ''}
                               "
                             >
                               <span class="js-date">
@@ -2197,7 +2705,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
                               class="elCalendar__sell 
                               ${isPublicHoliday(month.monthName, el.dayNum) ? ' bg-dark-1 text-white tooltip-toggle' : ''} 
                               ${remoteLocation === 'South Africa' || remoteLocation === 'France' ? isRemotePublicHoliday(remoteLocation, month.monthName, el.dayNum) ? 'bg-accent-1 text-black tooltip-toggle' : '' : ''} 
-                              ${isDayAvailable(month.monthName, el.dayNum, nbOfLeaves) ? 'bg-potential' : ''}"
+                              ${isDayAvailable(month.monthName, el.dayNum, nbOfLeaves) ? 'bg-potential' : ''}
+                              ${!isInSelectedRange(month.monthName, el.dayNum) ? 'is-out-of-range' : ''}"
                               title="${getHolidayTitle(month.monthName, el.dayNum, remoteLocation)}" >
                               <span class="js-date">
                                 ${el.dayNum}
